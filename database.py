@@ -1,4 +1,4 @@
-import csv
+import pandas as pd
 import sqlite3
 import os
 
@@ -17,91 +17,44 @@ def push_csv_to_sqlite(db_name='claims.db'):
         claim_detail_path = os.path.join(data_folder, 'claim_detail_data.csv')
         claim_list_path = os.path.join(data_folder, 'claim_list_data.csv')
 
-        # --- 2. Create a connection to the SQLite database ---
+        # --- 2. Load CSV files into pandas DataFrames ---
+        # The delimiter is specified as '|' based on the file structure.
+        print("Reading CSV files from 'Data' folder...")
+        claim_detail_df = pd.read_csv(claim_detail_path, delimiter='|')
+        claim_list_df = pd.read_csv(claim_list_path, delimiter='|')
+        print("Successfully loaded CSV files.")
+
+        # --- 3. Create a connection to the SQLite database ---
         # This will create the database file if it doesn't exist.
         print(f"Connecting to SQLite database: {db_name}...")
         conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
         print("Database connection successful.")
 
-        # --- 3. Create tables ---
-        print("Creating tables...")
-        
-        # Create claim_list table
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS claim_list (
-                id INTEGER PRIMARY KEY,
-                patient_name TEXT,
-                billed_amount REAL,
-                paid_amount REAL,
-                status TEXT,
-                insurer_name TEXT,
-                discharge_date TEXT
-            )
-        ''')
-        
-        # Create claim_detail table
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS claim_detail (
-                id INTEGER PRIMARY KEY,
-                claim_id INTEGER,
-                denial_reason TEXT,
-                cpt_codes TEXT
-            )
-        ''')
-        
-        # --- 4. Load claim_list data ---
-        if os.path.exists(claim_list_path):
-            print("Loading claim_list data...")
-            with open(claim_list_path, 'r', encoding='utf-8') as file:
-                reader = csv.DictReader(file, delimiter='|')
-                for row in reader:
-                    cursor.execute('''
-                        INSERT OR REPLACE INTO claim_list 
-                        (id, patient_name, billed_amount, paid_amount, status, insurer_name, discharge_date)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                    ''', (
-                        int(row['id']),
-                        row['patient_name'],
-                        float(row['billed_amount']) if row['billed_amount'] else None,
-                        float(row['paid_amount']) if row['paid_amount'] else None,
-                        row['status'],
-                        row['insurer_name'],
-                        row['discharge_date']
-                    ))
-            print("claim_list data loaded successfully.")
-        else:
-            print(f"Warning: {claim_list_path} not found")
+        # --- 4. Write the DataFrames to tables in the database ---
+        # 'claim_detail' and 'claim_list' will be the names of the tables.
+        # if_exists='replace': If the table already exists, it will be dropped and recreated.
+        # index=False: The DataFrame index will not be written into the table as a column.
+        print("Writing 'claim_detail_df' to 'claim_detail' table...")
+        claim_detail_df.to_sql('claim_detail', conn, if_exists='replace', index=False)
+        print("'claim_detail' table created successfully.")
 
-        # --- 5. Load claim_detail data ---
-        if os.path.exists(claim_detail_path):
-            print("Loading claim_detail data...")
-            with open(claim_detail_path, 'r', encoding='utf-8') as file:
-                reader = csv.DictReader(file, delimiter='|')
-                for row in reader:
-                    cursor.execute('''
-                        INSERT OR REPLACE INTO claim_detail 
-                        (id, claim_id, denial_reason, cpt_codes)
-                        VALUES (?, ?, ?, ?)
-                    ''', (
-                        int(row['id']),
-                        int(row['claim_id']),
-                        row['denial_reason'],
-                        row['cpt_codes']
-                    ))
-            print("claim_detail data loaded successfully.")
-        else:
-            print(f"Warning: {claim_detail_path} not found")
+        print("Writing 'claim_list_df' to 'claim_list' table...")
+        claim_list_df.to_sql('claim_list', conn, if_exists='replace', index=False)
+        print("'claim_list' table created successfully.")
 
-        # --- 6. Commit and close ---
-        conn.commit()
-        conn.close()
-        print("Database operations completed successfully!")
-
+    except FileNotFoundError as e:
+        print(f"Error: {e}. Please ensure the 'Data' folder exists and contains the CSV files.")
     except Exception as e:
-        print(f"Error: {e}")
-        if 'conn' in locals():
+        print(f"An unexpected error occurred: {e}")
+    finally:
+        # --- 5. Close the database connection ---
+        # It's important to close the connection to save the changes.
+        if 'conn' in locals() and conn:
             conn.close()
+            print(f"Database connection closed. Data has been saved to '{db_name}'.")
+            # Provide the absolute path for clarity
+            print(f"Database file located at: {os.path.abspath(db_name)}")
 
+# --- Execute the function ---
 if __name__ == "__main__":
     push_csv_to_sqlite()
