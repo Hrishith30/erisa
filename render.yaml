@@ -6,8 +6,6 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn claims_interface.wsgi:application
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.7
       - key: DJANGO_SETTINGS_MODULE
         value: claims_interface.settings
       - key: SECRET_KEY
