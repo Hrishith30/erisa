@@ -11,8 +11,8 @@ def handler500(request):
 
 def handler403(request, exception):
     """Custom 403 error handler"""
-    return render(request, '404.html', status=403)
+    return render(request, '403.html', status=403)
 
 def handler400(request, exception):
     """Custom 400 error handler"""
-    return render(request, '404.html', status=400)
+    return render(request, '400.html', status=400)
