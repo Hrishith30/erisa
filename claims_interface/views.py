@@ -1,10 +1,16 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 import os
 
 def health_check(request):
     """Simple health check endpoint"""
     return HttpResponse("OK", content_type="text/plain")
+
+def root_view(request):
+    """Root view that redirects to appropriate page"""
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/dashboard/')
+    return HttpResponseRedirect('/login/')
 
 def handler404(request, exception):
     """Custom 404 error handler"""

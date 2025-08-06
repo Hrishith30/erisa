@@ -1,6 +1,7 @@
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth import get_user
+from django.http import HttpResponseRedirect
 
 class AuthenticationMiddleware:
     def __init__(self, get_response):
@@ -11,8 +12,8 @@ class AuthenticationMiddleware:
         if request.path.startswith('/dashboard/'):
             # Check if user is authenticated
             if not request.user.is_authenticated:
-                # Redirect to login page
-                return redirect('login')
+                # Redirect to login page using absolute path
+                return HttpResponseRedirect('/login/')
         
         response = self.get_response(request)
         return response

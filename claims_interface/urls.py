@@ -20,15 +20,9 @@ from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from . import views
 
-def redirect_to_login(request):
-    """Redirect root URL to login page"""
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/dashboard/')
-    return HttpResponseRedirect('/login/')
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', redirect_to_login, name='root'),
+    path('', views.root_view, name='root'),
     path('health/', views.health_check, name='health_check'),
     path('dashboard/', include('claims.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
