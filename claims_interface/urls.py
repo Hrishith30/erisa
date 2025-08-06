@@ -17,13 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 from . import views
 
 def redirect_to_login(request):
     """Redirect root URL to login page"""
     if request.user.is_authenticated:
-        return redirect('claims:dashboard')
-    return redirect('login')
+        return HttpResponseRedirect('/dashboard/')
+    return HttpResponseRedirect('/login/')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
