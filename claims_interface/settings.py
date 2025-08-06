@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'claims_interface.middleware.AuthenticationMiddleware',
+    # 'claims_interface.middleware.AuthenticationMiddleware',  # Temporarily disabled
 ]
 
 # WhiteNoise configuration

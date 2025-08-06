@@ -8,9 +8,14 @@ def health_check(request):
 
 def root_view(request):
     """Root view that redirects to appropriate page"""
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/dashboard/')
-    return HttpResponseRedirect('/login/')
+    try:
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/dashboard/')
+        else:
+            return HttpResponseRedirect('/login/')
+    except Exception as e:
+        # Fallback to login page if there's any error
+        return HttpResponseRedirect('/login/')
 
 def handler404(request, exception):
     """Custom 404 error handler"""
