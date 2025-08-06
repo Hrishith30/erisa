@@ -91,14 +91,27 @@ if DATABASE_URL:
         DATABASES = {
             'default': dj_database_url.parse(DATABASE_URL)
         }
-    except ImportError:
-        # Fallback to SQLite if dj-database-url is not available
+        print(f"Using PostgreSQL database: {DATABASE_URL[:20]}...")
+    except ImportError as e:
+        print(f"Warning: dj-database-url not available: {e}")
+        # Fallback to SQLite
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': BASE_DIR / 'claims.db',
             }
         }
+        print("Using SQLite database as fallback")
+    except Exception as e:
+        print(f"Error parsing DATABASE_URL: {e}")
+        # Fallback to SQLite
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'claims.db',
+            }
+        }
+        print("Using SQLite database as fallback")
 else:
     DATABASES = {
         'default': {
@@ -106,6 +119,7 @@ else:
             'NAME': BASE_DIR / 'claims.db',
         }
     }
+    print("No DATABASE_URL found, using SQLite")
 
 
 # Password validation
@@ -179,3 +193,25 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+# Logging configuration for debugging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
