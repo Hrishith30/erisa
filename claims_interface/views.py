@@ -6,6 +6,10 @@ def health_check(request):
     """Simple health check endpoint"""
     return HttpResponse("OK", content_type="text/plain")
 
+def test_view(request):
+    """Simple test view to check if Django is working"""
+    return HttpResponse("Django is working!", content_type="text/plain")
+
 def root_view(request):
     """Root view that redirects to appropriate page"""
     try:

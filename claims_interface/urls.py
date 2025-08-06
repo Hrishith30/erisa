@@ -23,6 +23,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.root_view, name='root'),
+    path('test/', views.test_view, name='test'),
     path('health/', views.health_check, name='health_check'),
     path('dashboard/', include('claims.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
