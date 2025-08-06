@@ -7,5 +7,8 @@ pip install -r requirements.txt
 # Create staticfiles directory if it doesn't exist
 mkdir -p staticfiles
 
-python manage.py collectstatic --no-input
+# Collect static files
+python manage.py collectstatic --no-input --clear
+
+# Run migrations
 python manage.py migrate

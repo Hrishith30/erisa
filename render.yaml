@@ -4,7 +4,6 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: bash start.sh
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: claims_interface.settings
@@ -14,5 +13,5 @@ services:
         value: False
       - key: ALLOWED_HOSTS
         value: .onrender.com
-    healthCheckPath: /
+    healthCheckPath: /health/
     autoDeploy: true

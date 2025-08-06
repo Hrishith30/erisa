@@ -55,6 +55,10 @@ MIDDLEWARE = [
     'claims_interface.middleware.AuthenticationMiddleware',
 ]
 
+# WhiteNoise configuration
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
+
 ROOT_URLCONF = 'claims_interface.urls'
 
 TEMPLATES = [
@@ -133,7 +137,7 @@ else:
     STATICFILES_DIRS = []
 
 # WhiteNoise configuration for static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

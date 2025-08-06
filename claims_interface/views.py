@@ -1,5 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import os
+
+def health_check(request):
+    """Simple health check endpoint"""
+    return HttpResponse("OK", content_type="text/plain")
 
 def handler404(request, exception):
     """Custom 404 error handler"""
