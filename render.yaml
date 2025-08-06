@@ -16,7 +16,7 @@ services:
         value: False
       - key: ALLOWED_HOSTS
         value: .onrender.com
-    healthCheckPath: /dashboard/
+    healthCheckPath: /health/
     autoDeploy: true
 
 databases:

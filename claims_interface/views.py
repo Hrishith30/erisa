@@ -1,5 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+
+def health_check(request):
+    """Simple health check endpoint"""
+    return JsonResponse({'status': 'healthy', 'message': 'Claims Management System is running'})
 
 def handler404(request, exception):
     """Custom 404 error handler"""

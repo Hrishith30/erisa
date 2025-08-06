@@ -28,6 +28,7 @@ def redirect_to_login(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', redirect_to_login, name='root'),
+    path('health/', views.health_check, name='health_check'),
     path('dashboard/', include('claims.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
