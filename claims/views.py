@@ -336,11 +336,12 @@ def flag_claim(request, claim_id):
         claim = get_object_or_404(ClaimList, id=claim_id)
         reason = request.POST.get('reason', '')
         
-        # Create new flag (allow multiple flags)
+        # Create new flag with explicit timestamp
         flag = ClaimFlag.objects.create(
             claim=claim,
             user=request.user,
-            reason=reason
+            reason=reason,
+            flagged_at=timezone.now()
         )
         
         if request.headers.get('HX-Request'):
@@ -382,7 +383,8 @@ def add_note(request, claim_id):
             note = ClaimNote.objects.create(
                 claim=claim,
                 user=request.user,
-                note=note_text
+                note=note_text,
+                created_at=timezone.now()
             )
         else:
             messages.error(request, 'Note cannot be empty.')

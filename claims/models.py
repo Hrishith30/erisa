@@ -43,7 +43,7 @@ class ClaimFlag(models.Model):
     """Model for flagging claims for review - burger alert system"""
     claim = models.ForeignKey(ClaimList, on_delete=models.CASCADE, related_name='flags')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    flagged_at = models.DateTimeField(auto_now_add=True)
+    flagged_at = models.DateTimeField()
     reason = models.CharField(max_length=500, blank=True, null=True)
     is_resolved = models.BooleanField(default=False)
     resolved_at = models.DateTimeField(blank=True, null=True)
@@ -62,7 +62,7 @@ class ClaimNote(models.Model):
     claim = models.ForeignKey(ClaimList, on_delete=models.CASCADE, related_name='notes')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     note = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
