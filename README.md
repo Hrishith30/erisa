@@ -1,5 +1,7 @@
 # Claims Management System
 
+###Comment down lines 58 and 172 for local development
+
 A comprehensive Django-based claims management system with modern UI, real-time interactions, and advanced analytics capabilities.
 
 ## 🚀 Features

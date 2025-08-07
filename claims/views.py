@@ -106,7 +106,8 @@ def claim_list(request):
         insurer_name__icontains='test'
     ).values_list('insurer_name', flat=True).distinct()
     
-    # Pagination
+    # Pagination - add ordering to prevent inconsistent results
+    claims = claims.order_by('id')  # Order by ID for consistent pagination
     paginator = Paginator(claims, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -237,12 +238,21 @@ def claim_details_list(request):
     # Filter by denial reason
     denial_filter = request.GET.get('denial_reason', '')
     if denial_filter:
-        details = details.filter(denial_reason=denial_filter)
+        if denial_filter == 'No Denial':
+            # Filter for records with no denial reason (None or empty)
+            details = details.filter(denial_reason__isnull=True) | details.filter(denial_reason='')
+        else:
+            details = details.filter(denial_reason=denial_filter)
     
-    # Get unique values for filters
-    denial_reasons = ClaimDetail.objects.values_list('denial_reason', flat=True).distinct()
+    # Get unique values for filters - exclude None values
+    denial_reasons = ClaimDetail.objects.exclude(
+        denial_reason__isnull=True
+    ).exclude(
+        denial_reason=''
+    ).values_list('denial_reason', flat=True).distinct()
     
-    # Pagination
+    # Pagination - add ordering to prevent inconsistent results
+    details = details.order_by('id')  # Order by ID for consistent pagination
     paginator = Paginator(details, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

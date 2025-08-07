@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'claims_interface.middleware.AuthenticationMiddleware',  # Temporarily disabled
+    'claims_interface.middleware.AuthenticationMiddleware',  # Temporarily disabled
 ]
 
 ROOT_URLCONF = 'claims_interface.urls'

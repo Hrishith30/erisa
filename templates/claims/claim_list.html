@@ -41,16 +41,23 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-12 col-sm-6 col-lg-2 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary flex-fill">
-                    <i class="fas fa-search me-1"></i>
-                    <span class="d-none d-sm-inline">Search</span>
-                    <span class="d-sm-none">Search</span>
-                </button>
-                <a href="{% url 'claims:claim_list' %}" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i>
-                    <span class="d-none d-sm-inline">Clear</span>
-                </a>
+            <div class="col-12 col-sm-6 col-lg-1">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>
+                        <span class="d-none d-sm-inline">Search</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-1">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <a href="{% url 'claims:claim_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>
+                        <span class="d-none d-sm-inline">Clear</span>
+                    </a>
+                </div>
             </div>
         </form>
     </div>
