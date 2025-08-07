@@ -3,205 +3,246 @@
 {% block title %}Analytics - Claims Management System{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2 fs-3 fs-md-2">Analytics</h1>
-</div>
+<style>
+/* Ensure consistent sizing for analytics page */
+.analytics-container {
+    font-size: 1rem;
+    line-height: 1.5;
+}
 
-<!-- Summary Cards -->
-<div class="row g-3 mb-4" x-data="{ 
-    selectedTimeframe: 'monthly',
-    showChartDetails: false
-}">
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card h-100 shadow-sm">
-            <div class="card-body p-3 p-md-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col">
-                        <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
-                            Total Claims
+.analytics-container h1,
+.analytics-container h2,
+.analytics-container h3,
+.analytics-container h4,
+.analytics-container h5,
+.analytics-container h6 {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.analytics-container .card {
+    font-size: 1rem;
+}
+
+.analytics-container .table {
+    font-size: 0.875rem;
+}
+
+.analytics-container .btn {
+    font-size: 0.875rem;
+}
+
+/* Ensure chart containers maintain consistent sizing */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .analytics-container {
+        font-size: 0.9rem;
+    }
+    
+    .analytics-container .table {
+        font-size: 0.8rem;
+    }
+    
+    .analytics-container .btn {
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<div class="analytics-container">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2 fs-3 fs-md-2">Analytics</h1>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4" x-data="{ 
+        selectedTimeframe: 'monthly',
+        showChartDetails: false
+    }">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card stats-card h-100 shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
+                                Total Claims
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">{{ total_claims }}</div>
                         </div>
-                        <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">{{ total_claims }}</div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-white-50"></i>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-chart-pie fa-2x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card stats-card h-100 shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
+                                Claim Total
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">
+                                ${{ total_billed|floatformat:2|default:"0.00" }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card stats-card h-100 shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
+                                Total Paid
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">
+                                ${{ first_insurer.total_paid|floatformat:2|default:"0.00" }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card stats-card h-100 shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
+                                Monthly Trend
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">
+                                {{ claims_by_month|length }} months
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-white-50"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card h-100 shadow-sm">
-            <div class="card-body p-3 p-md-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col">
-                        <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
-                            Claim Total
-                        </div>
-                        <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">
-                            ${{ total_billed|floatformat:2|default:"0.00" }}
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-white-50"></i>
+    <!-- Charts Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="m-0 fw-bold fs-6">Claims by Month</h6>
+                </div>
+                <div class="card-body p-3 p-md-4">
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card h-100 shadow-sm">
-            <div class="card-body p-3 p-md-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col">
-                        <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
-                            Total Paid
-                        </div>
-                        <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">
-                            ${{ first_insurer.total_paid|floatformat:2|default:"0.00" }}
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-white-50"></i>
+    <!-- Top Providers -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 fw-bold fs-6">Top Providers by Total Paid</h6>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="reloadAnalytics()">
+                            <i class="fas fa-sync-alt me-1"></i>
+                            <span class="d-none d-sm-inline">Reload</span>
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card stats-card h-100 shadow-sm">
-            <div class="card-body p-3 p-md-4">
-                <div class="row g-0 align-items-center">
-                    <div class="col">
-                        <div class="text-xs fw-bold text-white-50 text-uppercase mb-1 fs-6">
-                            Monthly Trend
-                        </div>
-                        <div class="h5 mb-0 fw-bold text-white fs-4 fs-md-3">
-                            {{ claims_by_month|length }} months
-                        </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-nowrap">Rank</th>
+                                    <th class="text-nowrap">Provider Name</th>
+                                    <th class="text-nowrap">Total Billed</th>
+                                    <th class="text-nowrap">Total Paid</th>
+                                    <th class="text-nowrap">Claim Count</th>
+                                    <th class="text-nowrap">Average per Claim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for insurer in insurer_data %}
+                                <tr>
+                                    <td class="text-nowrap"><strong>{{ forloop.counter }}</strong></td>
+                                    <td class="text-break">{{ insurer.insurer_name|default:"Unknown" }}</td>
+                                    <td class="text-nowrap">${{ insurer.total_billed|floatformat:2|default:"0.00" }}</td>
+                                    <td class="text-nowrap">${{ insurer.total_paid|floatformat:2|default:"0.00" }}</td>
+                                    <td class="text-nowrap">{{ insurer.count }}</td>
+                                    <td class="text-nowrap">${{ insurer.average|floatformat:2|default:"0.00" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No provider data available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-calendar fa-2x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Trends Table -->
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="m-0 fw-bold fs-6">Monthly Claims Trends</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-nowrap">Month</th>
+                                    <th class="text-nowrap">Claim Count</th>
+                                    <th class="text-nowrap">Total Amount</th>
+                                    <th class="text-nowrap">Average per Claim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for month in claims_by_month %}
+                                <tr>
+                                    <td class="text-nowrap"><strong>{{ month.month }}</strong></td>
+                                    <td class="text-nowrap">{{ month.count }}</td>
+                                    <td class="text-nowrap">${{ month.total_billed|floatformat:2|default:"0.00" }}</td>
+                                    <td class="text-nowrap">${{ month.average|floatformat:2|default:"0.00" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No monthly data available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Row -->
-<div class="row g-3 mb-4">
-    <div class="col-12 col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <h6 class="m-0 fw-bold fs-6">Claims by Month</h6>
-            </div>
-            <div class="card-body p-3 p-md-4">
-                <div class="position-relative" style="height: 300px;">
-                    <canvas id="monthlyChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-lg-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <h6 class="m-0 fw-bold fs-6">Claims by Status</h6>
-            </div>
-            <div class="card-body p-3 p-md-4">
-                <div class="position-relative" style="height: 300px;">
-                    <canvas id="statusChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Top Providers -->
-<div class="row g-3 mb-4">
-    <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <h6 class="m-0 fw-bold fs-6">Top Providers by Total Paid</h6>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="reloadAnalytics()">
-                        <i class="fas fa-sync-alt me-1"></i>
-                        <span class="d-none d-sm-inline">Reload</span>
-                    </button>
-                </div>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="text-nowrap">Rank</th>
-                                <th class="text-nowrap">Provider Name</th>
-                                <th class="text-nowrap">Total Billed</th>
-                                <th class="text-nowrap">Total Paid</th>
-                                <th class="text-nowrap">Claim Count</th>
-                                <th class="text-nowrap">Average per Claim</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for insurer in insurer_data %}
-                            <tr>
-                                <td class="text-nowrap"><strong>{{ forloop.counter }}</strong></td>
-                                <td class="text-break">{{ insurer.insurer_name|default:"Unknown" }}</td>
-                                <td class="text-nowrap">${{ insurer.total_billed|floatformat:2|default:"0.00" }}</td>
-                                <td class="text-nowrap">${{ insurer.total_paid|floatformat:2|default:"0.00" }}</td>
-                                <td class="text-nowrap">{{ insurer.count }}</td>
-                                <td class="text-nowrap">${{ insurer.average|floatformat:2|default:"0.00" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center">No provider data available.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Monthly Trends Table -->
-<div class="row g-3">
-    <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <h6 class="m-0 fw-bold fs-6">Monthly Claims Trends</h6>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="text-nowrap">Month</th>
-                                <th class="text-nowrap">Claim Count</th>
-                                <th class="text-nowrap">Total Amount</th>
-                                <th class="text-nowrap">Average per Claim</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for month in claims_by_month %}
-                            <tr>
-                                <td class="text-nowrap"><strong>{{ month.month }}</strong></td>
-                                <td class="text-nowrap">{{ month.count }}</td>
-                                <td class="text-nowrap">${{ month.total_billed|floatformat:2|default:"0.00" }}</td>
-                                <td class="text-nowrap">${{ month.average|floatformat:2|default:"0.00" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center">No monthly data available.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -269,43 +310,6 @@ const monthlyChart = new Chart(monthlyCtx, {
             }
         }
     }
-});
-
-// Status Chart
-const statusCtx = document.getElementById('statusChart').getContext('2d');
-const statusChart = new Chart(statusCtx, {
-    type: 'doughnut',
-    data: {
-         labels: [{% for status in status_data %}'{{ status.status }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
-        datasets: [{
-            data: [{% for status in status_data %}{{ status.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-            backgroundColor: [
-                '#007AFF',
-                '#34C759',
-                '#5AC8FA',
-                '#FF9500',
-                '#FF3B30'
-            ],
-            hoverBackgroundColor: [
-                '#0056CC',
-                '#2EAD4E',
-                '#4AB8E6',
-                '#E6850E',
-                '#E62E26'
-            ],
-            hoverBorderColor: "rgba(255, 255, 255, 1)",
-            borderWidth: 2,
-            borderColor: '#fff'
-        }],
-    },
-    options: {
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
-        }
-    },
 });
 
  // Reload analytics page

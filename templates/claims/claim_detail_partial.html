@@ -234,7 +234,7 @@
 </div>
 
 <!-- Claim Details Table -->
-<div class="card shadow-sm">
+<div class="card shadow-sm claim-line-items">
     <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h6 class="m-0 fw-bold fs-6">Claim Line Items ({{ claim_details.count }} items)</h6>
         <div class="btn-group" role="group">
@@ -275,14 +275,14 @@
                          </td>
                          <td class="text-break">
                              {% if detail.denial_reason %}
-                                 <span class="badge bg-danger fs-6">{{ detail.denial_reason }}</span>
+                                 <span class="badge bg-danger diagnosis-badge fs-6">{{ detail.denial_reason }}</span>
                              {% else %}
-                                 <span class="badge bg-success fs-6">No Denial</span>
+                                 <span class="badge bg-success diagnosis-badge fs-6">No Denial</span>
                              {% endif %}
                          </td>
                          <td class="text-break">
                              {% if detail.cpt_codes %}
-                                 <span class="badge bg-primary fs-6">{{ detail.cpt_codes }}</span>
+                                 <span class="badge bg-primary diagnosis-badge fs-6">{{ detail.cpt_codes }}</span>
                              {% else %}
                                  <span class="text-muted">-</span>
                              {% endif %}

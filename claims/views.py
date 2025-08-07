@@ -281,13 +281,6 @@ def analytics(request):
         total_paid=Sum('paid_amount')
     ).order_by('month')
     
-    # Claims by status (exclude test insurers)
-    status_data = ClaimList.objects.exclude(
-        insurer_name__icontains='test'
-    ).values('status').annotate(
-        count=Count('id')
-    ).order_by('-count')
-    
     # Claims by insurer (exclude test insurers)
     insurer_data = ClaimList.objects.exclude(
         insurer_name__icontains='test'
@@ -311,7 +304,6 @@ def analytics(request):
         'total_claims': total_claims,
         'total_billed': total_billed,
         'claims_by_month': list(claims_by_month),
-        'status_data': list(status_data),
         'insurer_data': list(insurer_data),
         'first_insurer': first_insurer,
     }
