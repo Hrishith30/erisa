@@ -1,0 +1,124 @@
+<!-- Results Summary -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold fs-6">Claim Details ({{ page_obj.paginator.count }} total)</h6>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="reloadClaimDetails()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        <span class="d-none d-sm-inline">Reload</span>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive claim-line-items">
+                                            <table class="table table-hover table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                                                <th class="text-nowrap" style="width: 15%;">Detail ID</th>
+                            <th class="text-nowrap" style="width: 15%;">Claim ID</th>
+                            <th class="text-nowrap" style="width: 25%; padding-left: 100px;">Denial Reason</th>
+                            <th class="text-nowrap" style="width: 25%; padding-left: 110px;">CPT Codes</th>
+                            <th class="text-nowrap text-center" style="width: 20%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detail in page_obj %}
+                                <tr>
+                                    <td class="text-nowrap align-middle"><strong>{{ detail.id }}</strong></td>
+                                    <td class="text-nowrap align-middle">
+                                        <a href="{% url 'claims:claim_detail' detail.claim_id %}" class="text-decoration-none">
+                                            {{ detail.claim_id }}
+                                        </a>
+                                    </td>
+                                    <td class="text-start">
+                                        {% if detail.denial_reason %}
+                                            <div class="bg-danger text-white rounded px-2 py-1" style="font-size: 0.875rem; white-space: normal; text-align: center; width: 80%; line-height: 1.3; margin-bottom: 0.5rem;">{{ detail.denial_reason }}</div>
+                                        {% else %}
+                                            <div class="bg-success text-white rounded px-2 py-1" style="font-size: 0.875rem; margin-bottom: 0.5rem;">No Denial</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        {% if detail.cpt_codes %}
+                                            <div class="bg-info text-white rounded px-2 py-1" style="font-size: 0.875rem; white-space: normal; text-align: center; width: 80%; line-height: 1.3; margin-bottom: 0.5rem;">{{ detail.cpt_codes }}</div>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'claims:claim_detail' detail.claim_id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye me-1"></i>
+                                                <span class="d-none d-sm-inline">View</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                                            <p class="mb-0">No claim details found matching your criteria.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div id="pagination-section" style="margin: 20px 0; text-align: center;">
+            <!-- Page info -->
+            <div style="margin-bottom: 15px; color: #666;">
+                <strong>Page:</strong> {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} | 
+                <strong>Total Records:</strong> {{ page_obj.paginator.count }} | 
+                <strong>Records per page:</strong> {{ page_obj.paginator.per_page }}
+            </div>
+    
+    <!-- Simple pagination without Bootstrap -->
+    <div style="margin-bottom: 10px;">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if denial_filter %}&denial_reason={{ denial_filter }}{% endif %}#pagination-section" 
+               style="display: inline-block; margin: 0 1px; padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; font-size: 0.9rem;">
+                First
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if denial_filter %}&denial_reason={{ denial_filter }}{% endif %}#pagination-section" 
+               style="display: inline-block; margin: 0 1px; padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; font-size: 0.9rem;">
+                Previous
+            </a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span style="display: inline-block; margin: 0 1px; padding: 5px 10px; background: #28a745; color: white; border-radius: 3px; font-size: 0.9rem;">
+                    {{ num }}
+                </span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if denial_filter %}&denial_reason={{ denial_filter }}{% endif %}#pagination-section" 
+                   style="display: inline-block; margin: 0 1px; padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; font-size: 0.9rem;">
+                    {{ num }}
+                </a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if denial_filter %}&denial_reason={{ denial_filter }}{% endif %}#pagination-section" 
+                   style="display: inline-block; margin: 0 1px; padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; font-size: 0.9rem;">
+                    Next
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if denial_filter %}&denial_reason={{ denial_filter }}{% endif %}#pagination-section" 
+                   style="display: inline-block; margin: 0 1px; padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; font-size: 0.9rem;">
+                    Last
+                </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
