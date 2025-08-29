@@ -39,8 +39,12 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='registration/login.html'), name='logout'),
     path('favicon.ico', RedirectView.as_view(url='/static/favicon_new.ico'), name='favicon'),
+    path('favicon_new.ico', RedirectView.as_view(url='/static/favicon_new.ico'), name='favicon_new'),
 ]
 
 # Serve static files during development
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    # Ensure static files are served in production
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
