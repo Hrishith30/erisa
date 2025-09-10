@@ -138,39 +138,68 @@ def claim_detail(request, claim_id):
         from django.http import HttpResponse
         
         try:
+            # Build a safe filename using claim id and patient name
+            patient_name = (claim.patient_name or 'patient').strip()
+            safe_patient = ''.join(ch.lower() if ch.isalnum() else '-' for ch in patient_name)
+            safe_patient = '-'.join(filter(None, safe_patient.split('-')))  # collapse repeats
+            filename = f"{claim_id}-{safe_patient}.csv"
             response = HttpResponse(content_type='text/csv; charset=utf-8')
-            response['Content-Disposition'] = f'attachment; filename="claim_{claim_id}_report.csv"'
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
             response['Access-Control-Allow-Origin'] = '*'
             
-            writer = csv.writer(response)
-            writer.writerow(['Claim ID', 'Patient Name', 'Insurer', 'Status', 'Discharge Date', 'Billed Amount', 'Paid Amount', 'CPT Codes', 'Denial Reason'])
-            
-            # Get claim details for CPT codes and denial reasons
-            claim_details = ClaimDetail.objects.filter(claim_id=claim_id)
-            cpt_codes = []
-            denial_reasons = []
-            
-            for detail in claim_details:
-                if detail.cpt_codes:
-                    cpt_codes.append(detail.cpt_codes)
-                if detail.denial_reason:
-                    denial_reasons.append(detail.denial_reason)
-            
-            # Join multiple values with semicolons
-            cpt_codes_str = '; '.join(cpt_codes) if cpt_codes else '-'
-            denial_reasons_str = '; '.join(denial_reasons) if denial_reasons else '-'
-            
+            writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+            # Header
             writer.writerow([
-                claim.id,
-                claim.patient_name or '-',
-                claim.insurer_name or '-',
-                claim.status or '-',
-                claim.discharge_date.strftime('%m/%d/%Y') if claim.discharge_date else '-',
-                f"${claim.billed_amount:.2f}" if claim.billed_amount else '$0.00',
-                f"${claim.paid_amount:.2f}" if claim.paid_amount else '$0.00',
-                cpt_codes_str,
-                denial_reasons_str
+                'Claim ID',
+                'Patient Name',
+                'Insurer',
+                'Status',
+                'Discharge Date',
+                'Billed Amount',
+                'Paid Amount',
+                'Detail ID',
+                'CPT Codes',
+                'Denial Reason',
             ])
+            
+            # Write one row per claim detail; include claim meta on each row
+            details_qs = ClaimDetail.objects.filter(claim_id=claim_id).order_by('id')
+            if details_qs.exists():
+                for detail in details_qs:
+                    # Normalize CPT codes: handle comma-separated or list-like strings
+                    raw_codes = detail.cpt_codes or ''
+                    if raw_codes:
+                        parts = [p.strip().strip("[]'\"") for p in raw_codes.split(',')]
+                        parts = [p for p in parts if p]
+                        cpt_normalized = '; '.join(parts) if parts else '-'
+                    else:
+                        cpt_normalized = '-'
+                    writer.writerow([
+                        claim.id,
+                        claim.patient_name or '-',
+                        claim.insurer_name or '-',
+                        claim.status or '-',
+                        claim.discharge_date.strftime('%m/%d/%Y') if claim.discharge_date else '-',
+                        f"{float(claim.billed_amount or 0):.2f}",
+                        f"{float(claim.paid_amount or 0):.2f}",
+                        detail.id,
+                        cpt_normalized,
+                        detail.denial_reason or '-',
+                    ])
+            else:
+                # Write a single row with claim info if no details exist
+                writer.writerow([
+                    claim.id,
+                    claim.patient_name or '-',
+                    claim.insurer_name or '-',
+                    claim.status or '-',
+                    claim.discharge_date.strftime('%m/%d/%Y') if claim.discharge_date else '-',
+                    f"{float(claim.billed_amount or 0):.2f}",
+                    f"{float(claim.paid_amount or 0):.2f}",
+                    '-',
+                    '-',
+                    '-',
+                ])
             
             return response
         except Exception as e:

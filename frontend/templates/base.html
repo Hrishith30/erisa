@@ -83,15 +83,6 @@
         .fs-5 { font-size: 1.25rem !important; }
         .fs-6 { font-size: 1rem !important; }
         
-        /* Responsive font sizes */
-        @media (max-width: 768px) {
-            .fs-1 { font-size: 2rem !important; }
-            .fs-2 { font-size: 1.75rem !important; }
-            .fs-3 { font-size: 1.5rem !important; }
-            .fs-4 { font-size: 1.25rem !important; }
-            .fs-5 { font-size: 1.125rem !important; }
-            .fs-6 { font-size: 0.875rem !important; }
-        }
         
         /* FIXED SIDEBAR - Consistent sizing across all screen sizes */
         .sidebar {
@@ -174,11 +165,57 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         
+        /* Mobile Navigation Toggle Button */
+        .mobile-nav-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1050;
+            display: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+            transition: all 0.3s ease;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
         /* Hide mobile toggle on desktop */
-        @media (min-width: 768px) {
+        @media (min-width: 769px) {
             .mobile-nav-toggle {
                 display: none !important;
             }
+        }
+        
+        .mobile-nav-toggle:hover {
+            background: linear-gradient(135deg, #0056CC 0%, #4A4AC8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+        
+        /* Mobile Overlay */
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .mobile-overlay.show {
+            opacity: 1;
+            visibility: visible;
         }
         
         .mobile-nav-toggle {
@@ -257,42 +294,19 @@
             visibility: hidden;
         }
         
-        /* MOBILE RESPONSIVE - Sidebar slides in from left */
-        @media (max-width: 767.98px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 280px; /* Keep same width on mobile */
-                z-index: 1001; /* Above overlay */
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                margin-top: 0;
-                padding-top: 4rem;
-            }
+        /* DESKTOP LAYOUT - Fixed positioning with consistent spacing */
+        .main-content {
+            margin-left: 280px !important; /* Match sidebar width exactly */
+            width: calc(100% - 280px) !important; /* Calculate remaining width */
+            max-width: calc(100% - 280px) !important;
+            margin-top: 0;
+            padding-left: 0;
+            flex-shrink: 0;
         }
         
-        /* DESKTOP LAYOUT - Fixed positioning with consistent spacing */
-        @media (min-width: 768px) {
-            .main-content {
-                margin-left: 280px !important; /* Match sidebar width exactly */
-                width: calc(100% - 280px) !important; /* Calculate remaining width */
-                max-width: calc(100% - 280px) !important;
-                margin-top: 0;
-                padding-left: 0;
-                flex-shrink: 0;
-            }
-            
-            /* Ensure sidebar is always visible on desktop */
-            .sidebar {
-                transform: translateX(0);
-            }
+        /* Ensure sidebar is always visible */
+        .sidebar {
+            transform: translateX(0);
         }
         
         /* Smooth scrolling for sidebar */
@@ -381,6 +395,39 @@
             background: #0056CC;
         }
         
+        /* Disable horizontal scrollbars for select tables on desktop */
+        @media (min-width: 992px) {
+            .no-scroll-desktop {
+                overflow-x: visible !important;
+            }
+            .no-scroll-desktop .table {
+                min-width: 0 !important;
+            }
+        }
+        
+        /* Utility to force wrapping for rows that should wrap even at high DPI */
+        .allow-wrap {
+            flex-wrap: wrap !important;
+        }
+
+        /* 2x2 equal quadrants grid for financial summary */
+        .fs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: 1fr;
+            gap: 0;
+            width: 100%;
+        }
+        .fs-grid .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 1rem 0;
+            min-height: 110px;
+            text-align: center;
+        }
+        
         /* Table styling improvements */
         .table {
             min-width: 600px; /* Ensure minimum width for readability */
@@ -414,54 +461,6 @@
             background-color: rgba(0, 122, 255, 0.1);
         }
         
-        /* Mobile-specific table improvements */
-        @media (max-width: 767.98px) {
-            .table-responsive {
-                border-radius: 0.375rem;
-                margin: 0 -0.5rem; /* Negative margin to extend to edges */
-                padding: 0 0.5rem; /* Add padding to maintain spacing */
-            }
-            
-            .table {
-                min-width: 500px; /* Slightly smaller minimum width on mobile */
-                font-size: 0.875rem; /* Smaller font on mobile */
-                table-layout: auto; /* Allow natural column sizing on mobile */
-            }
-            
-            .table th,
-            .table td {
-                padding: 0.5rem 0.375rem; /* Smaller padding on mobile */
-                font-size: 0.875rem;
-                white-space: normal; /* Allow text wrapping on mobile */
-                word-break: break-word; /* Break long words on mobile */
-            }
-            
-            /* Ensure badges don't break table layout */
-            .badge {
-                font-size: 0.75rem !important;
-                padding: 0.25rem 0.5rem !important;
-                white-space: nowrap !important;
-            }
-        }
-        
-        /* Extra small mobile devices */
-        @media (max-width: 575.98px) {
-            .table-responsive {
-                margin: 0 -0.25rem;
-                padding: 0 0.25rem;
-            }
-            
-            .table {
-                min-width: 450px; /* Even smaller minimum width */
-                font-size: 0.8rem;
-            }
-            
-            .table th,
-            .table td {
-                padding: 0.375rem 0.25rem;
-                font-size: 0.8rem;
-            }
-        }
         
         .btn-primary {
             background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
@@ -644,45 +643,6 @@
             font-size: 0.85rem !important;
         }
         
-        @media (max-width: 767.98px) {
-            .badge {
-                width: 80px !important;
-                font-size: 0.7rem !important;
-                padding: 0.2rem 0.4rem !important;
-            }
-            
-            .claim-line-items .badge {
-                width: 120px !important;
-                font-size: 0.75rem !important;
-                padding: 0.25rem 0.6rem !important;
-            }
-            
-            .claim-line-items .diagnosis-badge {
-                width: 250px !important;
-                font-size: 0.8rem !important;
-                padding: 0.3rem 0.7rem !important;
-            }
-        }
-        
-        @media (max-width: 575.98px) {
-            .badge {
-                width: 70px !important;
-                font-size: 0.65rem !important;
-                padding: 0.15rem 0.3rem !important;
-            }
-            
-            .claim-line-items .badge {
-                width: 100px !important;
-                font-size: 0.7rem !important;
-                padding: 0.2rem 0.5rem !important;
-            }
-            
-            .claim-line-items .diagnosis-badge {
-                width: 200px !important;
-                font-size: 0.75rem !important;
-                padding: 0.25rem 0.6rem !important;
-            }
-        }
         
         /* Table cell alignment and content handling */
         .table td {
@@ -719,7 +679,7 @@
             overflow: hidden;
         }
         
-        /* Enhanced clear button flexibility for flagged and claims list during zoom */
+        /* Clear button styling */
         .btn-clear {
             min-width: 80px;
             max-width: none;
@@ -742,113 +702,103 @@
             transform: translateY(0);
         }
         
-        /* Enhanced zoom-friendly clear button sizing for flagged and claims list */
-        @media (max-width: 575.98px) {
-            .btn-clear {
-                min-width: 110px;
-                width: 100%;
-                padding: 0.625rem 1.25rem;
-                font-size: 0.875rem !important;
-            }
-        }
-        
-        @media (min-width: 576px) and (max-width: 767.98px) {
-            .btn-clear {
-                min-width: 100px;
-                width: 100%;
-                padding: 0.5rem 1.125rem;
-                font-size: 0.875rem !important;
-            }
-        }
-        
-        @media (min-width: 768px) and (max-width: 991.98px) {
-            .btn-clear {
-                min-width: 95px;
-                width: 100%;
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem !important;
-            }
-        }
-        
-        @media (min-width: 992px) {
-            .btn-clear {
-                min-width: 90px;
-                width: 100%;
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem !important;
-            }
-        }
-        
-        /* Enhanced zoom and DPI support for clear buttons */
-        @media (min-resolution: 120dpi) {
-            .btn-clear {
-                font-size: 0.875rem !important;
-                padding: 0.5rem 1rem;
-            }
-        }
-        
-        @media (min-resolution: 144dpi) {
-            .btn-clear {
-                font-size: 0.875rem !important;
-                padding: 0.5rem 1rem;
-            }
-        }
-        
-        /* Additional zoom levels for better flexibility */
-        @media (min-resolution: 96dpi) and (max-resolution: 119dpi) {
-            .btn-clear {
-                font-size: 0.875rem !important;
-                padding: 0.5rem 1rem;
-            }
-        }
-        
-        /* High zoom support (150%+) */
-        @media (min-resolution: 150dpi) {
-            .btn-clear {
-                font-size: 0.875rem !important;
-                padding: 0.625rem 1.125rem;
-                min-width: 100px;
-                width: 100%;
-            }
-        }
-        
-        /* Ultra high zoom support (200%+) */
-        @media (min-resolution: 200dpi) {
-            .btn-clear {
-                font-size: 0.875rem !important;
-                padding: 0.75rem 1.25rem;
-                min-width: 120px;
-                width: 100%;
-            }
-        }
-        
-        /* Prevent form wrapping at high zoom levels */
-        @media (min-resolution: 120dpi) {
-            .row.g-3 {
-                flex-wrap: nowrap;
+        /* Basic mobile responsiveness - minimal fixes */
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: flex !important;
             }
             
-            .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5 {
-                flex-shrink: 0;
-            }
-        }
-        
-        /* High zoom layout stability */
-        @media (min-resolution: 150dpi) {
-            .row.g-3 {
-                flex-wrap: nowrap !important;
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
             
-            .btn-clear {
-                flex-shrink: 0;
-                min-width: 100px;
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+            
+            .col-8, .col-6, .col-4, .col-3, .col-2 {
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+            
+            /* Make search form fields stack equally on mobile */
+            #searchForm .row,
+            #flagSearchForm .row {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            #searchForm .col-5,
+            #searchForm .col-3,
+            #searchForm .col-2,
+            #flagSearchForm .col-4,
+            #flagSearchForm .col-3,
+            #flagSearchForm .col-2 {
+                width: 100% !important;
+                flex: none;
+                margin-bottom: 1rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+            
+            .table th, .table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
+            }
+            
+            /* Claim Line Items table - show complete text horizontally on mobile */
+            .claim-line-items .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 0 -1rem;
+                padding: 0 1rem;
+            }
+            
+            .claim-line-items .table {
+                min-width: 900px;
+                font-size: 0.75rem;
+                table-layout: auto;
+            }
+            
+            .claim-line-items .table th,
+            .claim-line-items .table td {
+                padding: 0.4rem 0.3rem;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                vertical-align: middle;
+                min-width: 80px;
+            }
+            
+            .claim-line-items .table td.text-break {
+                white-space: normal;
+                word-break: break-word;
+                max-width: 150px;
+            }
+            
+            .claim-line-items .badge {
+                font-size: 0.65rem !important;
+                padding: 0.15rem 0.3rem !important;
+                white-space: nowrap !important;
+                display: inline-block !important;
+                min-width: 60px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Mobile Navigation Toggle Button -->
-    <button class="mobile-nav-toggle d-md-none" type="button" id="mobileNavToggle">
+    <button class="mobile-nav-toggle" type="button" id="mobileNavToggle">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -867,43 +817,37 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'claims:dashboard' %}">
                                 <i class="fas fa-tachometer-alt me-2"></i>
-                                <span class="d-none d-sm-inline">Dashboard</span>
-                                <span class="d-sm-none">Dashboard</span>
+                                Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'claim_list' %}active{% endif %}" href="{% url 'claims:claim_list' %}">
                                 <i class="fas fa-list me-2"></i>
-                                <span class="d-none d-sm-inline">Claims List</span>
-                                <span class="d-sm-none">Claims</span>
+                                Claims List
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'claim_details_list' %}active{% endif %}" href="{% url 'claims:claim_details_list' %}">
                                 <i class="fas fa-file-medical me-2"></i>
-                                <span class="d-none d-sm-inline">Claim Details</span>
-                                <span class="d-sm-none">Details</span>
+                                Claim Details
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'flagged_claims' %}active{% endif %}" href="{% url 'claims:flagged_claims' %}">
                                 <i class="fas fa-flag me-2"></i>
-                                <span class="d-none d-sm-inline">Flagged</span>
-                                <span class="d-sm-none">Flags</span>
+                                Flagged
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'notes_list' %}active{% endif %}" href="{% url 'claims:notes_list' %}">
                                 <i class="fas fa-note-sticky me-2"></i>
-                                <span class="d-none d-sm-inline">Notes</span>
-                                <span class="d-sm-none">Notes</span>
+                                Notes
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}" href="{% url 'claims:analytics' %}">
                                 <i class="fas fa-chart-bar me-2"></i>
-                                <span class="d-none d-sm-inline">Analytics</span>
-                                <span class="d-sm-none">Analytics</span>
+                                Analytics
                             </a>
                         </li>
                     </ul>
@@ -915,7 +859,7 @@
                 <div class="pt-3 pb-2 mb-3 content-wrapper">
                     {% if user.is_authenticated %}
                     <div class="user-header">
-                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
+                        <div class="d-flex justify-content-between align-items-center gap-3">
                             <div class="welcome-section">
                                 <div class="welcome-icon">
                                     <i class="fas fa-user-circle"></i>
@@ -928,8 +872,7 @@
                             <div class="logout-section">
                                 <a href="{% url 'logout' %}" class="btn btn-logout">
                                     <i class="fas fa-sign-out-alt me-2"></i>
-                                    <span class="d-none d-sm-inline">Logout</span>
-                                    <span class="d-sm-none">Logout</span>
+                                    Logout
                                 </a>
                             </div>
                         </div>
@@ -963,19 +906,19 @@
             if (mobileToggle && sidebar && mobileOverlay) {
                 // Mobile navigation toggle
                 mobileToggle.addEventListener('click', function() {
-                    if (isSidebarOpen) {
-                        // Close sidebar
-                        sidebar.style.transform = 'translateX(-100%)';
-                        mobileToggle.classList.remove('hidden');
-                        mobileOverlay.classList.remove('show');
-                        isSidebarOpen = false;
-                    } else {
-                        // Open sidebar
-                        sidebar.style.transform = 'translateX(0)';
-                        mobileToggle.classList.add('hidden');
-                        mobileOverlay.classList.add('show');
-                        isSidebarOpen = true;
-                    }
+                if (isSidebarOpen) {
+                    // Close sidebar
+                    sidebar.classList.remove('show');
+                    mobileToggle.classList.remove('hidden');
+                    mobileOverlay.classList.remove('show');
+                    isSidebarOpen = false;
+                } else {
+                    // Open sidebar
+                    sidebar.classList.add('show');
+                    mobileToggle.classList.add('hidden');
+                    mobileOverlay.classList.add('show');
+                    isSidebarOpen = true;
+                }
                 });
                 
                 // Close sidebar when clicking navigation links
@@ -983,7 +926,7 @@
                 navLinks.forEach(link => {
                     link.addEventListener('click', function() {
                         if (window.innerWidth < 768) {
-                            sidebar.style.transform = 'translateX(-100%)';
+                            sidebar.classList.remove('show');
                             mobileToggle.classList.remove('hidden');
                             mobileOverlay.classList.remove('show');
                             isSidebarOpen = false;
@@ -993,7 +936,7 @@
                 
                 // Close sidebar when clicking overlay
                 mobileOverlay.addEventListener('click', function() {
-                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebar.classList.remove('show');
                     mobileToggle.classList.remove('hidden');
                     mobileOverlay.classList.remove('show');
                     isSidebarOpen = false;
@@ -1002,7 +945,7 @@
                 // Close sidebar when clicking outside
                 document.addEventListener('click', function(event) {
                     if (isSidebarOpen && !sidebar.contains(event.target) && !mobileToggle.contains(event.target)) {
-                        sidebar.style.transform = 'translateX(-100%)';
+                        sidebar.classList.remove('show');
                         mobileToggle.classList.remove('hidden');
                         mobileOverlay.classList.remove('show');
                         isSidebarOpen = false;
@@ -1018,7 +961,7 @@
                 if (window.innerWidth >= 768) {
                     // Desktop: ensure sidebar is visible and main content is properly positioned
                     if (sidebar) {
-                        sidebar.style.transform = 'translateX(0)';
+                        sidebar.classList.remove('show');
                         isSidebarOpen = false; // Reset mobile state
                     }
                     if (mainContent) {
@@ -1029,7 +972,7 @@
                 } else {
                     // Mobile: ensure sidebar is hidden and main content takes full width
                     if (sidebar) {
-                        sidebar.style.transform = 'translateX(-100%)';
+                        sidebar.classList.remove('show');
                         isSidebarOpen = false; // Reset mobile state
                     }
                     if (mainContent) {
