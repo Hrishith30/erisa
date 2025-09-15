@@ -148,6 +148,13 @@ def claim_detail(request, claim_id):
             response['Access-Control-Allow-Origin'] = '*'
             
             writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+            
+            # Calculate financial metrics
+            total_billed = float(claim.billed_amount or 0)
+            total_paid = float(claim.paid_amount or 0)
+            outstanding_balance = total_billed - total_paid
+            payment_rate = (total_paid / total_billed * 100) if total_billed > 0 else 0
+            
             # Header
             writer.writerow([
                 'Claim ID',
@@ -157,6 +164,8 @@ def claim_detail(request, claim_id):
                 'Discharge Date',
                 'Billed Amount',
                 'Paid Amount',
+                'Outstanding Balance',
+                'Payment Rate (%)',
                 'Detail ID',
                 'CPT Codes',
                 'Denial Reason',
@@ -180,8 +189,10 @@ def claim_detail(request, claim_id):
                         claim.insurer_name or '-',
                         claim.status or '-',
                         claim.discharge_date.strftime('%m/%d/%Y') if claim.discharge_date else '-',
-                        f"{float(claim.billed_amount or 0):.2f}",
-                        f"{float(claim.paid_amount or 0):.2f}",
+                        f"{total_billed:.2f}",
+                        f"{total_paid:.2f}",
+                        f"{outstanding_balance:.2f}",
+                        f"{payment_rate:.1f}",
                         detail.id,
                         cpt_normalized,
                         detail.denial_reason or '-',
@@ -194,8 +205,10 @@ def claim_detail(request, claim_id):
                     claim.insurer_name or '-',
                     claim.status or '-',
                     claim.discharge_date.strftime('%m/%d/%Y') if claim.discharge_date else '-',
-                    f"{float(claim.billed_amount or 0):.2f}",
-                    f"{float(claim.paid_amount or 0):.2f}",
+                    f"{total_billed:.2f}",
+                    f"{total_paid:.2f}",
+                    f"{outstanding_balance:.2f}",
+                    f"{payment_rate:.1f}",
                     '-',
                     '-',
                     '-',
@@ -213,6 +226,10 @@ def claim_detail(request, claim_id):
     total_paid = claim.paid_amount or 0
     total_allowed = total_paid  # Since we don't have allowed amount in our model
     
+    # Calculate additional financial metrics
+    outstanding_balance = total_billed - total_paid
+    payment_rate = (total_paid / total_billed * 100) if total_billed > 0 else 0
+    
     # Get flags and notes
     flags = claim.flags.all().order_by('-flagged_at')
     notes = claim.notes.all().order_by('-created_at')
@@ -223,6 +240,8 @@ def claim_detail(request, claim_id):
         'total_billed': total_billed,
         'total_paid': total_paid,
         'total_allowed': total_allowed,
+        'outstanding_balance': outstanding_balance,
+        'payment_rate': payment_rate,
         'flags': flags,
         'notes': notes,
     }
@@ -239,6 +258,10 @@ def claim_detail_htmx(request, claim_id):
     total_paid = claim.paid_amount or 0
     total_allowed = total_paid
     
+    # Calculate additional financial metrics
+    outstanding_balance = total_billed - total_paid
+    payment_rate = (total_paid / total_billed * 100) if total_billed > 0 else 0
+    
     # Get flags and notes
     flags = claim.flags.all().order_by('-flagged_at')
     notes = claim.notes.all().order_by('-created_at')
@@ -249,6 +272,8 @@ def claim_detail_htmx(request, claim_id):
         'total_billed': total_billed,
         'total_paid': total_paid,
         'total_allowed': total_allowed,
+        'outstanding_balance': outstanding_balance,
+        'payment_rate': payment_rate,
         'flags': flags,
         'notes': notes,
     }
@@ -596,6 +621,10 @@ def flag_claim(request, claim_id):
             total_paid = claim.paid_amount or 0
             total_allowed = total_paid
             
+            # Calculate additional financial metrics
+            outstanding_balance = total_billed - total_paid
+            payment_rate = (total_paid / total_billed * 100) if total_billed > 0 else 0
+            
             # Get flags and notes
             flags = claim.flags.all().order_by('-flagged_at')
             notes = claim.notes.all().order_by('-created_at')
@@ -606,6 +635,8 @@ def flag_claim(request, claim_id):
                 'total_billed': total_billed,
                 'total_paid': total_paid,
                 'total_allowed': total_allowed,
+                'outstanding_balance': outstanding_balance,
+                'payment_rate': payment_rate,
                 'flags': flags,
                 'notes': notes,
             }
@@ -641,6 +672,10 @@ def add_note(request, claim_id):
             total_paid = claim.paid_amount or 0
             total_allowed = total_paid
             
+            # Calculate additional financial metrics
+            outstanding_balance = total_billed - total_paid
+            payment_rate = (total_paid / total_billed * 100) if total_billed > 0 else 0
+            
             # Get flags and notes
             flags = claim.flags.all().order_by('-flagged_at')
             notes = claim.notes.all().order_by('-created_at')
@@ -651,6 +686,8 @@ def add_note(request, claim_id):
                 'total_billed': total_billed,
                 'total_paid': total_paid,
                 'total_allowed': total_allowed,
+                'outstanding_balance': outstanding_balance,
+                'payment_rate': payment_rate,
                 'flags': flags,
                 'notes': notes,
             }
@@ -684,6 +721,10 @@ def resolve_flag(request, flag_id):
             total_paid = claim.paid_amount or 0
             total_allowed = total_paid
             
+            # Calculate additional financial metrics
+            outstanding_balance = total_billed - total_paid
+            payment_rate = (total_paid / total_billed * 100) if total_billed > 0 else 0
+            
             # Get flags and notes
             flags = claim.flags.all().order_by('-flagged_at')
             notes = claim.notes.all().order_by('-created_at')
@@ -694,6 +735,8 @@ def resolve_flag(request, flag_id):
                 'total_billed': total_billed,
                 'total_paid': total_paid,
                 'total_allowed': total_allowed,
+                'outstanding_balance': outstanding_balance,
+                'payment_rate': payment_rate,
                 'flags': flags,
                 'notes': notes,
             }

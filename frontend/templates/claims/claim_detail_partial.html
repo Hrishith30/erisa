@@ -75,12 +75,12 @@
                         <small class="text-muted d-block">Total Paid</small>
                     </div>
                     <div class="cell border-end">
-                        <h4 class="text-info mb-1 fs-5 fs-md-4">${{ total_allowed|floatformat:2 }}</h4>
-                        <small class="text-muted d-block">Total Allowed</small>
+                        <h4 class="text-warning mb-1 fs-5 fs-md-4">${{ outstanding_balance|floatformat:2 }}</h4>
+                        <small class="text-muted d-block">Outstanding Balance</small>
                     </div>
                     <div class="cell">
-                        <h4 class="text-warning mb-1 fs-5 fs-md-4">${{ total_billed|floatformat:2 }}</h4>
-                        <small class="text-muted d-block">Claim Total</small>
+                        <h4 class="text-info mb-1 fs-5 fs-md-4">{{ payment_rate|floatformat:1 }}%</h4>
+                        <small class="text-muted d-block">Payment Rate</small>
                     </div>
                 </div>
             </div>
