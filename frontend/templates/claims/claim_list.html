@@ -18,7 +18,7 @@
     </div>
     <div class="card-body p-4">
         <form method="get" class="row g-3" id="searchForm">
-            <div class="col-5">
+            <div class="col-4">
                 <label for="search" class="form-label">Search</label>
                 <input type="text" class="form-control" id="search" name="search" 
                        value="{{ search_query }}" placeholder="Search by ID, claimant, or policy..."
@@ -27,7 +27,7 @@
                        hx-target="#claims-table-container"
                        hx-push-url="false">
             </div>
-            <div class="col-2">
+            <div class="col-3">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-select" id="status" name="status" x-model="selectedStatus"
                         hx-get="{% url 'claims:claim_list_htmx' %}"
@@ -40,7 +40,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-2">
+            <div class="col-3">
                 <label for="policy" class="form-label">Policy</label>
                 <select class="form-select" id="policy" name="policy" x-model="selectedPolicy"
                         hx-get="{% url 'claims:claim_list_htmx' %}"
@@ -53,9 +53,9 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-3 d-flex align-items-end">
+            <div class="col-2 d-flex align-items-end">
                 <label class="form-label">&nbsp;</label>
-                <button type="button" class="btn btn-outline-secondary btn-clear" style="padding: 0.5rem 1rem; white-space: nowrap;" onclick="clearSearch()">
+                <button type="button" class="btn btn-outline-secondary btn-clear" onclick="clearSearch()">
                     <i class="fas fa-times me-1"></i>
                     <span class="">Clear</span>
                 </button>
