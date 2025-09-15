@@ -21,18 +21,14 @@
     <!-- Force favicon reload with aggressive cache busting -->
     <script>
         (function() {
-            console.log('Enhanced favicon loading script started...');
-            
             // Function to force favicon reload
             function reloadFavicon() {
                 var links = document.querySelectorAll("link[rel*='icon']");
-                console.log('Found', links.length, 'favicon links');
                 
                 links.forEach(function(link, index) {
                     var currentHref = link.href;
                     var separator = currentHref.includes('?') ? '&' : '?';
                     link.href = currentHref + separator + 't=' + Date.now() + '&v=2';
-                    console.log('Updated favicon link', index + 1, 'to:', link.href);
                 });
             }
             

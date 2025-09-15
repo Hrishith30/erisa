@@ -435,7 +435,6 @@ function generateReport() {
         btnText.textContent = 'Generating...';
         
         const reportUrl = "{% url 'claims:claim_detail' claim.id %}?export=csv";
-        console.log('Generating report for:', reportUrl);
         
         // Navigate directly so browser uses server-provided filename
         window.location.href = reportUrl;
@@ -447,7 +446,6 @@ function generateReport() {
         }, 1000);
         
     } catch (error) {
-        console.error('Error generating report:', error);
         btn.disabled = false;
         btnText.textContent = originalText;
         alert('Error generating report. Please try again.');

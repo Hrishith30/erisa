@@ -42,7 +42,6 @@ class DataMonitor {
     
     stopMonitoring() {
         this.isMonitoring = false;
-        console.log('Data monitoring stopped');
     }
     
     async checkForChanges() {
@@ -51,7 +50,6 @@ class DataMonitor {
             const data = await response.json();
             
             if (data.changes_detected) {
-                console.log('Changes detected in CSV files:', data.changed_files);
                 this.handleChanges(data);
             }
             
@@ -66,7 +64,6 @@ class DataMonitor {
             try {
                 callback(changeData);
             } catch (error) {
-                console.error('Error in change callback:', error);
             }
         });
         
